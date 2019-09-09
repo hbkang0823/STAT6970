@@ -1,3 +1,3 @@
 helloWorld <- function() {
-  print("Hello World")
+  print("Hello World to new GitHub users")
 }
