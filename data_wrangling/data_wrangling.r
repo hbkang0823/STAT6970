@@ -282,9 +282,8 @@ ateam_info <-
   str_split(., ":") %>% 
   unlist() %>% 
   matrix(.,ncol=2,byrow=T) %>% 
-  as.data.frame()
-colnames(ateam_info) <- c("Type", "Value")
-
+  as.data.frame() %>%
+  (function(x) {colnames(x) <- c("Type", "Value"); return(x)})
 
 
 
