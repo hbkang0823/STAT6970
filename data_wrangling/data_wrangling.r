@@ -115,8 +115,8 @@ pollution %>% group_by(size) %>% summarise(mean = mean(amount))
 
 
 tb %>%
+  mutate(cases = child + adult + elderly) %>%
   group_by(country, year) %>%
-  summarise(cases = sum(cases)) %>%
   summarise(cases = sum(cases))
 
 
@@ -124,7 +124,9 @@ tb %>%
 #dplyr::bind_rows()
 #dplyr::union()
 y <- tbl_df(data.frame(x1 = c("A","B","C"), x2 = 1:3))
+y$x1 <- as.character(y$x1)
 z <- tbl_df(data.frame(x1 = c("B","C","D"), x2 = 2:4))
+z$x1 <- as.character(z$x1)
 bind_cols(y, z)
 bind_rows(y, z)
 union(y, z)
@@ -158,7 +160,9 @@ str_subset(x, "[aeiou]")
 str_count(x, "[aeiou]")
 str_detect(x, "[aeiou]")
 str_locate(x, "[aeiou]")
+str_locate_all(x, "[aeiou]")
 str_extract(x, "[aeiou]")
+str_extract_all(x, "[aeiou]")
 str_match(x, "(.)[aeiou](.)")
 str_replace(x, "[aeiou]", "?")
 str_split(c("a,b", "c,d,e"), ",")
@@ -180,8 +184,8 @@ wday(bday, label = TRUE)
 time <- ymd_hms("2010-12-13 15:30:30")
 time
 
-with_tz(time, "America/Chicago")
-force_tz(time, "America/Chicago")
+with_tz(time, "America/Detroit")
+time <- force_tz(time, "America/Detroit")
 
 
 ################################################
@@ -233,6 +237,7 @@ read_excel(xlsx_example, na = "setosa")
 
 
 
+
 library("haven")
 
 # SAS
@@ -270,8 +275,16 @@ html_nodes(ateam, "center font b")
 ateam %>% html_nodes("center") %>% html_nodes("td")
 ateam %>% html_nodes("center") %>% html_nodes("font")
 
-ateam %>% html_nodes("center") %>% html_nodes("td") %>% 
-  html_text() %>% str_split(., ":") %>% unlist() %>% matrix(.,ncol=2,byrow=T) %>% as.data.frame()
+ateam_info <- 
+  ateam %>% html_nodes("center") %>% 
+  html_nodes("td") %>% 
+  html_text() %>% 
+  str_split(., ":") %>% 
+  unlist() %>% 
+  matrix(.,ncol=2,byrow=T) %>% 
+  as.data.frame()
+colnames(ateam_info) <- c("Type", "Value")
+
 
 
 
@@ -289,9 +302,6 @@ cast <- lego_movie %>%
   html_attr("alt")
 cast
 
-lego_movie %>% 
-  html_nodes("#titleCast a img") %>% 
-  html_attr("alt")
 
 poster <- lego_movie %>%
   html_nodes(".poster img") %>%
@@ -305,6 +315,10 @@ tmp <- html_table(html_nodes(births, "table"))[[1]]
 tmp2 <- apply(tmp, c(1,2), str_replace_all, ",","")
 tmp3 <- apply(tmp2, c(1,2), as.numeric)
 
+html_table(html_nodes(births, "table"))[[1]] %>%
+  apply(., c(1,2), str_replace_all, ",", "") %>%
+  apply(., c(1,2), as.numeric)
+
 
 
 # EXAMPLE: 100 popular films released in 2016.
@@ -312,7 +326,7 @@ tmp3 <- apply(tmp2, c(1,2), as.numeric)
 url <- 'http://www.imdb.com/search/title?count=100&release_date=2016,2016&title_type=feature'
 webpage <- read_html(url)
 
-rank_data <- html_nodes(webpage,'.text-primary')
+rank_data_html <- html_nodes(webpage,'.text-primary')
 rank_data <- html_text(rank_data_html)
 head(rank_data)
 rank_data<-as.numeric(rank_data)
@@ -327,7 +341,7 @@ title_data <- html_nodes(webpage,'.lister-item-header a') %>%
   html_text()
 head(title_data)
 
-description_data <- html_nodes(webpage,'.ratings-bar+ .text-muted') %>%
+description_data <- html_nodes(webpage,'.ratings-bar + .text-muted') %>%
   html_text() %>%
   str_remove_all(.,"\n") %>%
   str_trim()
@@ -346,6 +360,8 @@ genre_data <- html_nodes(webpage,'.genre') %>%
   sapply(., function(x){str_split(x,", ")[[1]][1]}) %>%
   #taking only the first genre of each movie
   as.factor()
+head(genre_data)
+levels(genre_data)
   
 
 #Using CSS selectors to scrape the IMDB rating section
@@ -379,7 +395,7 @@ length(metascore_data) # not 100
 
 #put NA's
 metascore_data2 <- rep(NA,100)
-#metascore_data2[-c(29,58,73,96)] <- metascore_data NEED TO BE CHANGED
+metascore_data2[-c(36,65,69,80)] <- metascore_data
 metascore_data <- as.numeric(metascore_data2)
 summary(metascore_data)
 
@@ -387,13 +403,13 @@ summary(metascore_data)
 gross_data <- html_nodes(webpage,'.ghost~ .text-muted+ span') %>%
   html_text() %>%
   str_replace(.,"M","") %>%
+  substring(., 2, 6)
 head(gross_data)
-gross_data<-substring(gross_data,2,6)
 length(gross_data)
 
 #put NA's
 gross_data2 <- rep(NA, 100)
-gross_data2[-c(29,45,57,62,73,93,98)] <- gross_data
+gross_data2[-c(92:100)] <- gross_data
 gross_data <- as.numeric(gross_data2)
 length(gross_data)
 
