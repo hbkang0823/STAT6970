@@ -1,6 +1,7 @@
 #################################
 #### Data Visualization in R ####
 #################################
+# Reference: http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html
 
 # Setup
 options(scipen=999)  # turn off scientific notation like 1e+06
@@ -12,7 +13,7 @@ data("midwest", package = "ggplot2")  # load the data
 theme_set(theme_bw())  # pre-set the bw theme.
 
 
-# Scatterplot
+### Scatterplot
 gg <- ggplot(midwest, aes(x=area, y=poptotal)) + 
   geom_point(aes(col=state, size=popdensity)) + 
   geom_smooth(method="loess", se=F) + 
@@ -34,7 +35,7 @@ library(RColorBrewer)
 head(brewer.pal.info, 15)  # show 15 palettes
 
 
-# Scatterplot With Encircling
+### Scatterplot With Encircling
 # devtools::install_github("hrbrmstr/ggalt")
 library(ggalt)
 midwest_select <- midwest[midwest$poptotal > 350000 & 
@@ -62,7 +63,7 @@ ggplot(midwest, aes(x=area, y=poptotal)) +
        caption="Source: midwest")
 
 
-# Jitter Plot
+### Jitter Plot
 g <- ggplot(mpg, aes(cty, hwy))
 
 # start with plain
@@ -85,7 +86,7 @@ g + geom_jitter(width = .5, size=1) +
        title="Jittered Points")
 
 
-# Counts Chart
+### Counts Chart
 g + geom_count(col="tomato3", show.legend=F) +
   labs(subtitle="mpg: city vs highway mileage", 
        y="hwy", 
@@ -93,7 +94,7 @@ g + geom_count(col="tomato3", show.legend=F) +
        title="Counts Plot")
 
 
-# Bubble plot: 4 variables in play (1 categorical)
+### Bubble plot: 4 variables in play (1 categorical)
 mpg_select <- mpg %>% filter(manufacturer %in% c("audi", "ford", "honda", "hyundai"))
 
 g <- ggplot(mpg_select, aes(displ, cty)) + 
@@ -104,6 +105,7 @@ g + geom_jitter(aes(col=manufacturer, size=hwy)) +
   geom_smooth(aes(col=manufacturer), method="lm", se=F)
 
 
+### Animated plot
 # Source: https://github.com/dgrtwo/gganimate
 # install.packages("cowplot")  # a gganimate dependency
 # devtools::install_github("dgrtwo/gganimate")
@@ -125,7 +127,7 @@ ggplot(gapminder, aes(gdpPercap, lifeExp, size = pop, colour = country)) +
   transition_time(year)
 
 
-# Marginal Histogram / Boxplot
+### Marginal Histogram / Boxplot
 # install.packages("ggExtra")
 library(ggExtra)
 mpg_select <- mpg %>% filter(hwy >= 35 & cty > 27)
@@ -139,7 +141,7 @@ ggMarginal(g, type = "boxplot", fill="transparent")
 ggMarginal(g, type = "density", fill="transparent")
 
 
-# Correlogram
+### Correlogram
 # devtools::install_github("kassambara/ggcorrplot")
 library(ggcorrplot)
 corr <- round(cor(mtcars), 1)
@@ -154,7 +156,7 @@ ggcorrplot(corr, hc.order = TRUE,
 
 
 
-# Diverging bars
+### Diverging bars
 # Diverging Bars is a bar chart that can handle both negative and positive values.
 
 # Data Prep
@@ -176,7 +178,7 @@ ggplot(mtcars, aes(x=`car name`, y=mpg_z, label=mpg_z)) +
   coord_flip()
 
 
-# Diverging Lollipop Chart
+### Diverging Lollipop Chart
 ggplot(mtcars, aes(x=`car name`, y=mpg_z, label=mpg_z)) + 
   geom_point(stat='identity', fill="black", size=6)  +
   geom_segment(aes(y = 0, 
@@ -191,7 +193,7 @@ ggplot(mtcars, aes(x=`car name`, y=mpg_z, label=mpg_z)) +
   coord_flip()
 
 
-# Diverging Dot Plot
+### Diverging Dot Plot
 ggplot(mtcars, aes(x=`car name`, y=mpg_z, label=mpg_z)) + 
   geom_point(stat='identity', aes(col=mpg_type), size=6)  +
   scale_color_manual(name="Mileage", 
@@ -204,7 +206,7 @@ ggplot(mtcars, aes(x=`car name`, y=mpg_z, label=mpg_z)) +
   coord_flip()
 
 
-# Area Chart
+### Area Chart
 library(quantmod)
 data("economics", package = "ggplot2")
 
@@ -225,7 +227,7 @@ ggplot(economics[1:100, ], aes(date, returns_perc)) +
        caption="Source: economics")
 
 
-# Ordered Bar Chart
+### Ordered Bar Chart
 
 # Prepare data: group mean city mileage by manufacturer.
 cty_mpg <- aggregate(mpg$cty, by=list(mpg$manufacturer), FUN=mean)  # aggregate
@@ -242,7 +244,7 @@ ggplot(cty_mpg, aes(x=make, y=mileage)) +
   theme(axis.text.x = element_text(angle=65, vjust=0.6))
 
 
-# Lollipop Chart
+### Lollipop Chart
 ggplot(cty_mpg, aes(x=make, y=mileage)) + 
   geom_point(size=3) + 
   geom_segment(aes(x=make, 
@@ -255,7 +257,7 @@ ggplot(cty_mpg, aes(x=make, y=mileage)) +
   theme(axis.text.x = element_text(angle=65, vjust=0.6))
 
 
-# Dot Plot
+### Dot Plot
 ggplot(cty_mpg, aes(x=make, y=mileage)) + 
   geom_point(col="tomato2", size=3) +   # Draw points
   geom_segment(aes(x=make, 
@@ -270,7 +272,7 @@ ggplot(cty_mpg, aes(x=make, y=mileage)) +
   coord_flip()
 
 
-# Slope Chart
+### Slope Chart
 library(scales)
 theme_set(theme_classic())
 
@@ -304,7 +306,7 @@ p + theme(panel.background = element_blank(),
           plot.margin = unit(c(1,2,1,2), "cm"))
 
 
-# Dumbbell Plot
+### Dumbbell Plot
 library(ggalt)
 
 health <- read.csv("https://raw.githubusercontent.com/selva86/datasets/master/health.csv")
@@ -334,7 +336,7 @@ plot(gg)
 
 
 
-# Histogram
+### Histogram
 # Histogram on a Continuous (Numeric) Variable
 g <- ggplot(mpg, aes(displ)) + scale_fill_brewer(palette = "Spectral")
 
@@ -361,7 +363,7 @@ g + geom_bar(aes(fill=class), width = 0.5) +
        subtitle="Manufacturer across Vehicle Classes") 
 
 
-# Density plot
+### Density plot
 g <- ggplot(mpg, aes(cty))
 g + geom_density(aes(fill=factor(cyl)), alpha=0.8) + 
   labs(title="Density plot", 
@@ -371,7 +373,7 @@ g + geom_density(aes(fill=factor(cyl)), alpha=0.8) +
        fill="# Cylinders")
 
 
-# Box Plot
+### Box Plot
 g <- ggplot(mpg, aes(class, cty))
 g + geom_boxplot(varwidth=T, fill="plum") + 
   labs(title="Box plot", 
@@ -391,7 +393,7 @@ g + geom_boxplot(aes(fill=factor(cyl))) +
        y="City Mileage")
 
 
-# Dot + Box Plot
+### Dot + Box Plot
 g <- ggplot(mpg, aes(manufacturer, cty))
 g + geom_boxplot() + 
   geom_dotplot(binaxis='y', 
@@ -406,7 +408,7 @@ g + geom_boxplot() +
        y="City Mileage")
 
 
-# Tufte Boxplot
+### Tufte Boxplot
 # inspired by the works of Edward Tufte
 # Tufte's Box plot is just a box plot made minimal and visually appealing.
 library(ggthemes)
@@ -422,7 +424,7 @@ g + geom_tufteboxplot() +
        y="City Mileage")
 
 
-# Violin Plot
+### Violin Plot
 theme_set(theme_bw())
 
 g <- ggplot(mpg, aes(class, cty))
@@ -434,7 +436,7 @@ g + geom_violin() +
        y="City Mileage")
 
 
-# Population Pyramid
+### Population Pyramid
 email_campaign_funnel <- read.csv("https://raw.githubusercontent.com/selva86/datasets/master/email_campaign_funnel.csv")
 
 # X Axis Breaks and Labels 
@@ -454,7 +456,7 @@ ggplot(email_campaign_funnel, aes(x = Stage, y = Users, fill = Gender)) +   # Fi
 
 
 
-# Waffle Chart
+### Waffle Chart
 var <- mpg$class  # the categorical data 
 
 # Prep data
@@ -483,7 +485,7 @@ ggplot(df, aes(x = x, y = y, fill = category)) +
         legend.position = "right")
 
 
-# Pie Chart
+### Pie Chart
 theme_set(theme_classic())
 
 # Source: Frequency table
@@ -516,7 +518,7 @@ pie <- ggplot(mpg, aes(x = "", fill = factor(class))) +
 pie + coord_polar(theta = "y", start=0)
 
 
-# Treemap
+### Treemap
 # Treemap is a nice way of displaying hierarchical data by using nested rectangles.
 library(treemapify)
 #library(ggplotify)
@@ -535,7 +537,7 @@ ggplot(G20, aes(area = gdp_mil_usd, fill = hdi, label = country,
   geom_treemap_text(colour = "white", place = "topleft", reflow = T)
 
 
-# Time Series Plot
+### Time Series Plot
 ggplot(economics, aes(x=date)) + 
   geom_line(aes(y=returns_perc)) + 
   labs(title="Time Series Chart", 
@@ -543,7 +545,7 @@ ggplot(economics, aes(x=date)) +
        caption="Source: Economics", 
        y="Returns %")
 
-# Time Series: Monthly
+## Time Series: Monthly
 library(lubridate)
 theme_set(theme_bw())
 
@@ -565,7 +567,8 @@ ggplot(economics_m, aes(x=date)) +
   theme(axis.text.x = element_text(angle = 90, vjust=0.5),  # rotate x axis text
         panel.grid.minor = element_blank())  # turn off minor grid
 
-# Time Series: Yearly
+
+## Time Series: Yearly
 economics_y <- economics[1:90, ]
 
 # labels and breaks for X axis text
@@ -585,7 +588,7 @@ ggplot(economics_y, aes(x=date)) +
         panel.grid.minor = element_blank())  # turn off minor grid
 
 
-# Time Series: from long format
+## Time Series: from long format
 data(economics_long, package = "ggplot2")
 head(economics_long)
 
@@ -611,7 +614,7 @@ ggplot(df, aes(x=date)) +
         panel.grid.minor = element_blank())  # turn off minor grid
 
 
-# Time Series: Wide data format
+## Time Series: Wide data format
 df <- economics[, c("date", "psavert", "uempmed")]
 df <- df[lubridate::year(df$date) %in% c(1967:1981), ]
 head(df)
@@ -633,7 +636,8 @@ ggplot(df, aes(x=date)) +
   theme(panel.grid.minor = element_blank())  # turn off minor grid
 
 
-# Stacked Area Chart
+
+### Stacked Area Chart
 df <- economics[, c("date", "psavert", "uempmed")]
 df <- df[lubridate::year(df$date) %in% c(1967:1981), ]
 
@@ -656,7 +660,7 @@ ggplot(df, aes(x=date)) +
 
 
 
-# Calendar Heatmap
+### Calendar Heatmap
 # http://margintale.blogspot.in/2012/04/ggplot2-time-series-heatmaps.html
 library(zoo)
 
@@ -683,11 +687,7 @@ ggplot(df, aes(monthweek, weekdayf, fill = VIX.Close)) +
 
 
 
-# Slope Chart
-
-
-
-# Seasonal Plot
+### Seasonal Plot
 library(forecast)
 theme_set(theme_classic())
 # Subset data
@@ -697,7 +697,7 @@ ggseasonplot(AirPassengers) + labs(title="Seasonal plot: International Airline P
 ggseasonplot(nottem_small) + labs(title="Seasonal plot: Air temperatures at Nottingham Castle")
 
 
-# Hierarchical Dendrogram
+### Hierarchical Dendrogram
 library(ggdendro)
 theme_set(theme_bw())
 
@@ -705,22 +705,22 @@ hc <- hclust(dist(USArrests), "ave")  # hierarchical clustering
 ggdendrogram(hc, rotate = TRUE, size = 2)
 
 
-# Clusters
+### Clusters
 library(ggalt)
 library(ggfortify)
 theme_set(theme_classic())
 
-# Compute data with principal components ------------------
+# Compute data with principal components
 df <- iris[c(1, 2, 3, 4)]
 pca_mod <- prcomp(df)  # compute principal components
 
-# Data frame of principal components ----------------------
+# Data frame of principal components
 df_pc <- data.frame(pca_mod$x, Species=iris$Species)  # dataframe of principal components
 df_pc_vir <- df_pc[df_pc$Species == "virginica", ]  # df for 'virginica'
 df_pc_set <- df_pc[df_pc$Species == "setosa", ]  # df for 'setosa'
 df_pc_ver <- df_pc[df_pc$Species == "versicolor", ]  # df for 'versicolor'
 
-# Plot ----------------------------------------------------
+# Plot
 ggplot(df_pc, aes(PC1, PC2, col=Species)) + 
   geom_point(aes(shape=Species), size=2) +   # draw points
   labs(title="Iris Clustering", 
@@ -732,6 +732,8 @@ ggplot(df_pc, aes(PC1, PC2, col=Species)) +
   geom_encircle(data = df_pc_set, aes(x=PC1, y=PC2)) + 
   geom_encircle(data = df_pc_ver, aes(x=PC1, y=PC2))
 
+
+# Slope Chart
 
 
 # Spatial: Using Google Map
