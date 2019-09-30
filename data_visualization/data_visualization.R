@@ -740,5 +740,4 @@ ggplot(df_pc, aes(PC1, PC2, col=Species)) +
 library(ggmap)
 library(ggalt)
 
-register_google(key = 'AIzaSyCuHYXG3r2kWRG2dv_3-et7P48rtCCsiAo')
 ### NEED TO WORK ON THIS. REQUIRES API.
